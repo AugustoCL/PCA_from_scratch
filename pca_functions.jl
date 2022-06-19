@@ -1,5 +1,5 @@
 # load packages -----------------------------------------------------------------------------
-using Statistics: mean, std, cov, svd
+using Statistics: mean, std
 using LinearAlgebra: eigen, svd
 using PrettyTables
 
@@ -34,12 +34,12 @@ function pca(X::AbstractMatrix{<:Real}, maxdim::T;  method::Symbol=:cov,
 
     # apply the chosen PCA method (:cov or :svd)
     if method == :cov
-        Σ = cov(Z) 
-        λ, V = eigen(Σ, sortby=λ -> -real(λ))        
+        Σ = (Z' * Z) ./ (n - 1)
+        λ, V = eigen(Σ, sortby=λ -> -real(λ))
     else 
         SVD = svd(Z')
         V = SVD.U
-        λ = abs2.(SVD.S) ./ (n-1)
+        λ = abs2.(SVD.S) ./ (n - 1)
     end
 
     # calculate the explained variance
